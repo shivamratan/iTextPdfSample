@@ -170,7 +170,7 @@ public class PdfBuilder {
 
       if(body!=null) {
           float headingTopBottompadding = 5.0f;
-          float[] columnWidths = {15, 5, 5};
+          float[] columnWidths = {20, 5, 5};
           PdfPTable table = new PdfPTable(columnWidths);
           table.setSpacingBefore(20.0f);
           table.setWidthPercentage(100);
@@ -278,9 +278,10 @@ public class PdfBuilder {
     private void addAdditives(InvoiceAdditive additive) {
         // GST , Terms & Condition Part
         if(additive!=null){
-            float[] columnWidths = {15, 10};
+            float[] columnWidths = {20, 10};
             PdfPTable table = new PdfPTable(columnWidths);
             table.setWidthPercentage(100);
+            table.setSpacingAfter(30.0f);
 
             PdfPCell leftCell = new PdfPCell();
             leftCell.setBorder(Rectangle.NO_BORDER);
@@ -288,7 +289,7 @@ public class PdfBuilder {
 
             //termsnCondition Cell in Table
             PdfPTable tncTable = new PdfPTable(1);
-            tncTable.setWidthPercentage(80.0f);
+            tncTable.setWidthPercentage(90.0f);
             tncTable.setHorizontalAlignment(Element.ALIGN_LEFT);
             leftCell.setHorizontalAlignment(Element.ALIGN_LEFT);
             leftCell.setVerticalAlignment(Element.ALIGN_BOTTOM);
@@ -309,10 +310,13 @@ public class PdfBuilder {
             ArrayList<String> tncItem = additive.getTermsnConditionList();
             for(int i=0;i<tncItem.size();i++)
             {
-                PdfPCell cell = new PdfPCell(new Phrase(i+". "+tncItem.get(i)));
+                PdfPCell cell = new PdfPCell(new Phrase((i+1)+". "+tncItem.get(i)));
                 cell.setBorder(Rectangle.LEFT|Rectangle.RIGHT);
+                cell.setPaddingLeft(5.0f);
+                cell.setPaddingRight(5.0f);
                 tncTable.addCell(cell);
             }
+
 
             //space addition
             for(int i=0;i<2;i++)
@@ -349,6 +353,33 @@ public class PdfBuilder {
             addRateTable.addCell(getBorderlessCell("Tax Due ",Element.ALIGN_RIGHT));
             addRateTable.addCell(getBorderlessCell(additive.getAdditionalRate().getTaxDue(),Element.ALIGN_RIGHT));
 
+            PdfPCell otherChargesCell = getBorderlessCell("Other ",Element.ALIGN_RIGHT);
+            otherChargesCell.setPaddingBottom(4.0f);
+            addRateTable.addCell(otherChargesCell);
+
+            PdfPCell otherChargesValueCell = getBorderlessCell(additive.getAdditionalRate().getOtherCharges(),Element.ALIGN_RIGHT);
+            otherChargesValueCell.setPaddingBottom(4.0f);
+            addRateTable.addCell(otherChargesValueCell);
+
+
+            Font boldfont = new Font();
+            boldfont.setStyle(Font.BOLD);
+            boldfont.setSize(14.0f);
+            PdfPCell totalSumCellLable = new PdfPCell(new Paragraph("Total Dues",boldfont));
+            totalSumCellLable.setPaddingTop(3.0f);
+            totalSumCellLable.setHorizontalAlignment(Rectangle.ALIGN_RIGHT);
+            totalSumCellLable.setBorder(Rectangle.TOP);
+
+            PdfPCell totalSumCellValue = new PdfPCell(new Paragraph(additive.getAdditionalRate().getTotalDues(),boldfont));
+            totalSumCellValue.setPaddingTop(3.0f);
+            totalSumCellValue.setBorder(Rectangle.TOP);
+            totalSumCellValue.setHorizontalAlignment(Rectangle.ALIGN_RIGHT);
+
+            addRateTable.addCell(totalSumCellLable);
+            addRateTable.addCell(totalSumCellValue);
+
+
+
             if(invoiceHeader!=null)
             {
                 PdfPCell instruction = new PdfPCell(new Phrase("Make All Checks Payable to "+invoiceHeader.getCompanyName()));
@@ -378,6 +409,26 @@ public class PdfBuilder {
     private void addFooter(InvoiceFooter footer) {
         // Footer Part
         if(footer!=null){
+            Paragraph queryParaLable = new Paragraph(footer.getQueryString());
+            queryParaLable.setAlignment(Element.ALIGN_CENTER);
+
+            Paragraph queryContact = new Paragraph(footer.getQueryName()+", "+footer.getQueryPhone()+", "+footer.getQueryMail());
+            queryContact.setAlignment(Element.ALIGN_CENTER);
+
+            Font boldfont = new Font();
+            boldfont.setSize(14.0f);
+            boldfont.setStyle(Font.BOLDITALIC);
+            Paragraph thankuPara = new Paragraph(footer.getThankuMessage(),boldfont);
+            thankuPara.setPaddingTop(35.0f);
+            thankuPara.setAlignment(Element.ALIGN_CENTER);
+          try{
+            document.add(queryParaLable);
+            document.add(queryContact);
+            document.add(new Paragraph("\n"));
+            document.add(thankuPara);
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
 
         }
     }

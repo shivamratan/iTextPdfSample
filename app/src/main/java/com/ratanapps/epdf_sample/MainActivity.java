@@ -15,6 +15,7 @@ import com.ratanapps.epdf_sample.activity.PdfBuilder;
 import com.ratanapps.epdf_sample.communication.PdfGeneratedCallback;
 import com.ratanapps.epdf_sample.model.InvoiceAdditive;
 import com.ratanapps.epdf_sample.model.InvoiceBody;
+import com.ratanapps.epdf_sample.model.InvoiceFooter;
 import com.ratanapps.epdf_sample.model.InvoiceHeader;
 import com.ratanapps.epdf_sample.model.InvoiceSubject;
 import com.ratanapps.epdf_sample.util.Util;
@@ -67,19 +68,23 @@ public class MainActivity extends AppCompatActivity implements PdfGeneratedCallb
         tncList.add("Please Invoice Number in your invoice Check");
         tncList.add("Please Invoice Number in your invoice Check");
 
-        InvoiceAdditive.AdditionalRate additionalRate = new InvoiceAdditive.AdditionalRate("$ 344.00","$ 333.00","6.25 %","$ 21.56","-","$ 371.56");
+        InvoiceAdditive.AdditionalRate additionalRate = new InvoiceAdditive.AdditionalRate("$ 344.00","$ 333.00","6.25 %","$ 21.56","-    ","$ 371.56");
 
+        String queryString = "If you have any question about this invoice, Please Contact";
+        String thankuMessage = "Thank you for your business !";
 
         InvoiceHeader invoiceHeader = new InvoiceHeader("XYZ Company","Simplicity is Perfection",companyAddress,"73993398983","23 Nov, 2018","INV-3434GCR","CUST009");
         InvoiceSubject invoiceSubject = new InvoiceSubject("Kevin","ABC Company",billToAddress);
         InvoiceBody invoiceBody = new InvoiceBody(bodyItemList);
         InvoiceAdditive invoiceAdditive = new InvoiceAdditive(tncList,additionalRate);
+        InvoiceFooter invoiceFooter = new InvoiceFooter(queryString,"John","+137439439","john@xyz.com",thankuMessage);
 
         PdfBuilder pdfBuilder = PdfBuilder.getBuilder(this)
                                 .header(invoiceHeader)
                                 .subject(invoiceSubject)
                                 .body(invoiceBody)
                                 .additives(invoiceAdditive)
+                                .footer(invoiceFooter)
                                 .build();
     }
 
