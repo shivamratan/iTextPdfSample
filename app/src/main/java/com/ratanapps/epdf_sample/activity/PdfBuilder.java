@@ -280,16 +280,19 @@ public class PdfBuilder {
         if(additive!=null){
             float[] columnWidths = {15, 10};
             PdfPTable table = new PdfPTable(columnWidths);
-
+            table.setWidthPercentage(100);
 
             PdfPCell leftCell = new PdfPCell();
             leftCell.setBorder(Rectangle.NO_BORDER);
 
+
             //termsnCondition Cell in Table
             PdfPTable tncTable = new PdfPTable(1);
             tncTable.setWidthPercentage(80.0f);
+            tncTable.setHorizontalAlignment(Element.ALIGN_LEFT);
             leftCell.setHorizontalAlignment(Element.ALIGN_LEFT);
             leftCell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+            tncTable.setSpacingBefore(10.0f);
             Font headingFont = new Font();
             headingFont.setStyle(Font.BOLD);
             headingFont.setColor(BaseColor.WHITE);
@@ -307,15 +310,18 @@ public class PdfBuilder {
             for(int i=0;i<tncItem.size();i++)
             {
                 PdfPCell cell = new PdfPCell(new Phrase(i+". "+tncItem.get(i)));
-                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setBorder(Rectangle.LEFT|Rectangle.RIGHT);
                 tncTable.addCell(cell);
             }
 
             //space addition
-            for(int i=0;i<5;i++)
+            for(int i=0;i<2;i++)
             {
                 PdfPCell cell = new PdfPCell(new Phrase(" "));
-                cell.setBorder(Rectangle.NO_BORDER);
+               if(i!=1)
+                cell.setBorder(Rectangle.LEFT|Rectangle.RIGHT);
+               else
+                   cell.setBorder(Rectangle.LEFT|Rectangle.RIGHT|Rectangle.BOTTOM);
                 tncTable.addCell(cell);
             }
 
@@ -324,22 +330,24 @@ public class PdfBuilder {
 
             PdfPCell rightCell = new PdfPCell();
             rightCell.setBorder(Rectangle.NO_BORDER);
+            rightCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 
             //Additional Rate Description
             float addRateTableColumnwidth[] = {5,5};
             PdfPTable addRateTable = new PdfPTable(addRateTableColumnwidth);
+            addRateTable.setWidthPercentage(100);
 
-            addRateTable.addCell("SubTotal ");
-            addRateTable.addCell(additive.getAdditionalRate().getSubTotal());
+            addRateTable.addCell(getBorderlessCell("SubTotal",Element.ALIGN_RIGHT));
+            addRateTable.addCell(getBorderlessCell(additive.getAdditionalRate().getSubTotal(),Element.ALIGN_RIGHT));
 
-            addRateTable.addCell("Taxable ");
-            addRateTable.addCell(additive.getAdditionalRate().getTaxable());
+            addRateTable.addCell(getBorderlessCell("Taxable ",Element.ALIGN_RIGHT));
+            addRateTable.addCell(getBorderlessCell(additive.getAdditionalRate().getTaxable(),Element.ALIGN_RIGHT));
 
-            addRateTable.addCell("Tax Rate ");
-            addRateTable.addCell(additive.getAdditionalRate().getTaxRate());
+            addRateTable.addCell(getBorderlessCell("Tax Rate ",Element.ALIGN_RIGHT));
+            addRateTable.addCell(getBorderlessCell(additive.getAdditionalRate().getTaxRate(),Element.ALIGN_RIGHT));
 
-            addRateTable.addCell("Tax Due ");
-            addRateTable.addCell(additive.getAdditionalRate().getTaxDue());
+            addRateTable.addCell(getBorderlessCell("Tax Due ",Element.ALIGN_RIGHT));
+            addRateTable.addCell(getBorderlessCell(additive.getAdditionalRate().getTaxDue(),Element.ALIGN_RIGHT));
 
             if(invoiceHeader!=null)
             {
@@ -347,6 +355,7 @@ public class PdfBuilder {
                 instruction.setColspan(2);
                 instruction.setPaddingTop(20.0f);
                 instruction.setHorizontalAlignment(Element.ALIGN_CENTER);
+                instruction.setBorder(Rectangle.NO_BORDER);
                 instruction.setPaddingBottom(5.0f);
 
                 addRateTable.addCell(instruction);
@@ -441,6 +450,15 @@ public class PdfBuilder {
     public PdfBuilder footer(InvoiceFooter footer) {
             this.invoiceFooter = footer;
             return this;
+    }
+
+
+    private PdfPCell getBorderlessCell(String elementName,int alignment)
+    {
+        PdfPCell cell = new PdfPCell(new Phrase(elementName));
+        cell.setHorizontalAlignment(alignment);
+        cell.setBorder(Rectangle.NO_BORDER);
+        return cell;
     }
 
 }
